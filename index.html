@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Merci Maram</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Pacifico&display=swap">
+<style>
+  /* Layout: une carte douce centrée, un grand prénom en écriture manuscrite, le rendez-vous en pastille et un compte à rebours en trois bulles. */
+  :root {
+    --bg: #ffe6f0;
+    --bg-2: #eadbff;
+    --card: rgba(255, 255, 255, 0.88);
+    --fg: #4b1d41;
+    --muted: #8a5e80;
+    --accent: #d6336f;
+    --accent-ink: #ffffff;
+    --accent-soft: #ffd3e5;
+    --lilac: #b693f5;
+    --lilac-soft: #efe5ff;
+    --line: #f3b9d3;
+    --shadow: 0 18px 50px rgba(214, 51, 111, 0.22);
+    --font-body: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+    --font-script: "Pacifico", "Brush Script MT", cursive;
+    color-scheme: light;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { min-height: 100%; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image: linear-gradient(160deg, var(--bg) 0%, var(--bg-2) 100%);
+    background-attachment: fixed;
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 28px;
+    min-height: 100dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow-x: hidden;
+  }
+
+  #floaters { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .floater { position: absolute; bottom: -60px; opacity: 0; animation: rise linear infinite; }
+  .floater svg { display: block; width: 100%; height: 100%; }
+  @keyframes rise {
+    0% { transform: translateY(0) rotate(-8deg); opacity: 0; }
+    12% { opacity: 0.55; }
+    88% { opacity: 0.4; }
+    100% { transform: translateY(-115vh) rotate(10deg); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .floater { animation: none; opacity: 0.35; bottom: auto; }
+  }
+
+  main { position: relative; z-index: 1; width: 100%; max-width: 560px; }
+
+  .card {
+    background: var(--card);
+    border: 2px solid #fff;
+    border-radius: 32px;
+    box-shadow: var(--shadow);
+    padding: 36px 24px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+  }
+
+  .badge {
+    width: 76px; height: 76px; border-radius: 50%;
+    background: var(--accent-soft);
+    display: grid; place-items: center;
+  }
+  .badge svg { width: 40px; height: 40px; }
+
+  .eyebrow {
+    margin: 0;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  h1 {
+    margin: 0;
+    font-weight: 600;
+    font-size: clamp(1.9rem, 7.4vw, 2.7rem);
+    line-height: 1.18;
+    text-wrap: balance;
+  }
+  h1 .name {
+    font-family: var(--font-script);
+    font-weight: 400;
+    color: var(--accent);
+    display: inline-block;
+    padding-inline: 0.08em;
+  }
+
+  .body { margin: 0; max-width: 38ch; color: var(--fg); text-wrap: balance; }
+
+  .when {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 999px;
+    padding: 12px 22px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    box-shadow: 0 8px 20px rgba(214, 51, 111, 0.3);
+    max-width: 100%;
+  }
+
+  .count { display: flex; justify-content: center; gap: 12px; width: 100%; }
+  .count div {
+    flex: 1 1 0; min-width: 0; max-width: 96px;
+    background: var(--lilac-soft);
+    border-radius: 22px;
+    padding: 12px 4px;
+  }
+  .count strong { display: block; font-size: 1.8rem; line-height: 1.1; font-variant-numeric: tabular-nums; }
+  .count small { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .count-label { margin: 0; color: var(--muted); font-size: 0.95rem; }
+
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    border: 2px solid var(--accent); border-radius: 999px;
+    background: #fff; color: var(--accent);
+    padding: 0.75em 1.6em; line-height: 1.2;
+    transition: transform 0.15s ease;
+  }
+  button:hover { transform: translateY(-2px); }
+  button:focus-visible { outline: 3px solid var(--lilac); outline-offset: 3px; }
+
+  .note {
+    margin: 0;
+    background: var(--accent-soft);
+    border-radius: 22px;
+    padding: 14px 20px;
+    max-width: 38ch;
+    text-wrap: balance;
+  }
+
+  .sign { margin: 0; font-family: var(--font-script); color: var(--accent); font-size: 1.4rem; }
+
+  #burst { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
+  @media (prefers-reduced-motion: reduce) { button { transition: none; } }
+</style>
+</head>
+<body>
+
+<div id="floaters" aria-hidden="true"></div>
+
+<main>
+  <article class="card">
+    <div class="badge" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path fill="#d6336f" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 2.8 4.5 6.4 4.5c2.1 0 3.9 1.1 5.6 3.2 1.7-2.1 3.5-3.2 5.6-3.2 3.6 0 5.5 3.7 4 7.2C19.5 16.4 12 21 12 21z"/></svg>
+    </div>
+
+    <p class="eyebrow">Un petit mot pour toi</p>
+    <h1 id="title"></h1>
+    <p class="body" id="body"></p>
+
+    <div class="when" id="when"></div>
+
+    <div>
+      <div class="count" id="count" role="timer" aria-label="Temps restant avant le rendez-vous">
+        <div><strong id="cd">0</strong><small>jours</small></div>
+        <div><strong id="ch">0</strong><small>heures</small></div>
+        <div><strong id="cm">0</strong><small>minutes</small></div>
+      </div>
+      <p class="count-label" id="countLabel"></p>
+    </div>
+
+    <button id="more" type="button">Appuie ici, j'ai encore un mot</button>
+    <p class="note" id="note" hidden aria-live="polite"></p>
+    <p class="sign" id="sign" hidden></p>
+  </article>
+</main>
+
+<canvas id="burst" aria-hidden="true"></canvas>
+
+<script>
+  // À personnaliser : tout vient d'ici.
+  var CONFIG = {
+    name: "Maram",
+    from: "",                          // ton prénom (facultatif), affiché en signature
+    whenText: "Mardi 24 novembre, vers 17h",
+    target: "2026-11-24T17:00:00+01:00", // date du rendez-vous pour le compte à rebours
+    variant: "tendre",                  // "tendre", "drole" ou "simple"
+    messages: {
+      tendre: {
+        title: "Merci, {name}",
+        body: "Merci d'avoir dit oui. Tu viens de rendre ma semaine beaucoup plus belle, et j'ai hâte de te retrouver.",
+        note: "Je prépare tout pour que ce moment te plaise. À mardi !"
+      },
+      drole: {
+        title: "{name}, tu as dit oui !",
+        body: "Mon cœur a fait une petite danse quand j'ai vu ta réponse. Merci, tu ne le sais pas encore, mais tu as très bien choisi.",
+        note: "Tu n'as qu'à venir avec ton plus beau sourire, je m'occupe du reste. À mardi !"
+      },
+      simple: {
+        title: "Merci, {name}",
+        body: "Merci d'avoir accepté mon invitation. Ça me fait vraiment plaisir et j'ai hâte de te voir mardi.",
+        note: "Je te donne les détails très vite. À mardi !"
+      }
+    }
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var HEART = '<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.2 2.8 4.5 6.4 4.5c2.1 0 3.9 1.1 5.6 3.2 1.7-2.1 3.5-3.2 5.6-3.2 3.6 0 5.5 3.7 4 7.2C19.5 16.4 12 21 12 21z"/></svg>';
+
+  var msg = CONFIG.messages[CONFIG.variant] || CONFIG.messages.tendre;
+
+  // Titre avec le prénom en écriture manuscrite
+  document.title = "Merci " + CONFIG.name;
+  var parts = msg.title.split("{name}");
+  var h = $("title");
+  h.appendChild(document.createTextNode(parts[0]));
+  var nm = document.createElement("span");
+  nm.className = "name";
+  nm.textContent = CONFIG.name;
+  h.appendChild(nm);
+  h.appendChild(document.createTextNode(parts.slice(1).join(CONFIG.name)));
+
+  $("body").textContent = msg.body;
+  $("when").textContent = CONFIG.whenText;
+  $("note").textContent = msg.note;
+  if (CONFIG.from) { $("sign").textContent = CONFIG.from; }
+
+  // Cœurs flottants en fond
+  (function () {
+    var box = $("floaters"), colors = ["#ff9cc2", "#ffc2da", "#c9a8ff", "#ffb3cf", "#e6d3ff"];
+    for (var i = 0; i < 16; i++) {
+      var d = document.createElement("div");
+      var s = 18 + Math.random() * 34;
+      d.className = "floater";
+      d.style.left = (Math.random() * 96).toFixed(1) + "%";
+      d.style.width = d.style.height = s.toFixed(0) + "px";
+      d.style.color = colors[i % colors.length];
+      if (reduce) { d.style.top = (Math.random() * 90).toFixed(0) + "%"; }
+      else {
+        d.style.animationDuration = (14 + Math.random() * 14).toFixed(1) + "s";
+        d.style.animationDelay = (-Math.random() * 24).toFixed(1) + "s";
+      }
+      d.innerHTML = HEART;
+      box.appendChild(d);
+    }
+  })();
+
+  // Compte à rebours
+  var targetMs = new Date(CONFIG.target).getTime();
+  function updateCount() {
+    var diff = targetMs - Date.now();
+    if (isNaN(targetMs)) { $("count").hidden = true; $("countLabel").hidden = true; return; }
+    if (diff <= 0) {
+      $("count").hidden = true;
+      $("countLabel").textContent = "C'est le grand jour, à tout à l'heure !";
+      return;
+    }
+    var mins = Math.floor(diff / 60000);
+    $("cd").textContent = Math.floor(mins / 1440);
+    $("ch").textContent = Math.floor((mins % 1440) / 60);
+    $("cm").textContent = mins % 60;
+    $("countLabel").textContent = "avant qu'on se retrouve";
+  }
+  updateCount();
+  setInterval(updateCount, 30000);
+
+  // Cœurs en confettis
+  var canvas = $("burst"), ctx = canvas.getContext("2d");
+  var pieces = [], raf = null;
+  function size() {
+    var dpr = window.devicePixelRatio || 1;
+    canvas.width = window.innerWidth * dpr;
+    canvas.height = window.innerHeight * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  function heart(x, y, s) {
+    ctx.beginPath();
+    ctx.moveTo(x, y + s * 0.3);
+    ctx.bezierCurveTo(x, y - s * 0.3, x - s, y - s * 0.3, x - s, y + s * 0.3);
+    ctx.bezierCurveTo(x - s, y + s * 0.75, x, y + s * 1.0, x, y + s * 1.25);
+    ctx.bezierCurveTo(x, y + s * 1.0, x + s, y + s * 0.75, x + s, y + s * 0.3);
+    ctx.bezierCurveTo(x + s, y - s * 0.3, x, y - s * 0.3, x, y + s * 0.3);
+    ctx.closePath();
+    ctx.fill();
+  }
+  function burst(count, ox, oy) {
+    size();
+    var colors = ["#d6336f", "#ff7aa8", "#ffb3cf", "#b693f5", "#ffffff", "#ffd36e"];
+    var n = reduce ? Math.min(count, 18) : count;
+    for (var i = 0; i < n; i++) {
+      pieces.push({
+        x: ox + (Math.random() - 0.5) * 60,
+        y: oy,
+        vx: (Math.random() - 0.5) * 11,
+        vy: -(5 + Math.random() * 10),
+        s: 6 + Math.random() * 10,
+        c: colors[(Math.random() * colors.length) | 0],
+        life: 1
+      });
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  function tick() {
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    pieces = pieces.filter(function (p) { return p.life > 0 && p.y < window.innerHeight + 40; });
+    pieces.forEach(function (p) {
+      p.vy += 0.24; p.x += p.vx; p.y += p.vy; p.vx *= 0.99; p.life -= 0.006;
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.c;
+      heart(p.x, p.y, p.s);
+    });
+    ctx.globalAlpha = 1;
+    if (pieces.length) { raf = requestAnimationFrame(tick); }
+    else { raf = null; ctx.clearRect(0, 0, window.innerWidth, window.innerHeight); }
+  }
+
+  // Petit mot caché + confettis
+  $("more").addEventListener("click", function (e) {
+    var r = e.currentTarget.getBoundingClientRect();
+    $("note").hidden = false;
+    if (CONFIG.from) { $("sign").hidden = false; }
+    e.currentTarget.hidden = true;
+    burst(80, r.left + r.width / 2, r.top + r.height / 2);
+  });
+
+  // Quelques cœurs à l'ouverture
+  setTimeout(function () { burst(40, window.innerWidth / 2, window.innerHeight * 0.55); }, 500);
+</script>
+</body>
+</html>
